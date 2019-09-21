@@ -1,0 +1,17 @@
+/**
+ * next特有的babel配置，默认情况下使用import{Button} from 'antd'会将antd全部导入
+ * babel-plugin-import的作用是在使用以上方法导入时，分模块导入，而不是全部导入
+ * 相当于import Button from 'antd/lib/button'
+ */
+{
+    "presets": ["next/babel"],
+    "plugins": [
+        [
+            "import",
+            {
+                "libraryName": "antd"
+                // "style": "css" // css分模块加载
+            }
+        ]
+    ]
+}
