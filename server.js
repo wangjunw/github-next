@@ -11,11 +11,14 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
-  router.get("/test", ctx => {
-    ctx.body = {
-      a: 1
-    };
-    ctx.set("Content-Type", "application/json");
+  // 前端路由映射，刷新问题
+  router.get("/test/:id", async ctx => {
+    const id = ctx.params.id;
+    await handle(ctx.req, ctx.res, {
+      pathname: "/a",
+      query: { id }
+    });
+    ctx.respond = false;
   });
   /**
    * 中间件一般使用异步函数,next调用下一个中间件
