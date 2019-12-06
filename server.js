@@ -5,8 +5,10 @@ const next = require("next");
 // 不等于production表示处于开发状态
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
+
 // handle函数处理http请求的响应
 const handle = app.getRequestHandler();
+
 // prepare：等到pages下的页面编译完成，再去启动服务响应请求
 app.prepare().then(() => {
   const server = new Koa();
