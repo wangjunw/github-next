@@ -1,5 +1,6 @@
 /**
- * 重写next默认的app组件，中间写自己要加的部分，一般是公共的一些代码
+ * pages下的文件对应路由访问的页面
+ * _app.js重写next默认的app组件，中间写自己要加的部分，一般是公共的一些代码
  * 按理说css文件也应该分模块加载，但是目前mini-css-extract-plugin有bug
  */
 import App from 'next/app';
