@@ -1,6 +1,9 @@
 /**
  * 各种hook
  */
+
+import { connect } from "react-redux";
+import { ADD } from "../store/store";
 import {
   useEffect,
   useState,
@@ -18,7 +21,7 @@ const countReducer = (state, action) => {
       return state;
   }
 };
-const Comp = () => {
+const Comp = ({ counter, add }) => {
   // const [count, setCount] = useState(0);
   const [count, dispatchCount] = useReducer(countReducer, 0);
   // 使用context
@@ -39,14 +42,20 @@ const Comp = () => {
   }, []);
 
   // 在挂在dom之前执行，useEffect在挂载之后执行
-  useLayoutEffect(() => {
-    console.log("layout effect");
-  }, [count]);
+  // useLayoutEffect(() => {
+  //   console.log("layout effect");
+  // }, [count]);
   return (
     <div>
       <p>{count}</p>
       <h3>{context}</h3>
-      <input ref={myRef} />
+      <h1>{counter}</h1>
+      <input
+        ref={myRef}
+        onChange={e => {
+          add(100);
+        }}
+      />
       <style jsx>{`
         p {
           color: blue;
@@ -55,5 +64,18 @@ const Comp = () => {
     </div>
   );
 };
-
-export default Comp;
+function mapStateToProps(state) {
+  return {
+    counter: state.num
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return {
+    add: num => dispatch({ type: "ADD", num })
+  };
+}
+Comp.getInitialProps = async ({ reduxStore }) => {
+  reduxStore.dispatch({ type: ADD, num: 100 });
+  return {};
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

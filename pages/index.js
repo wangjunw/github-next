@@ -34,4 +34,5 @@ Home.getInitialProps = async ctx => {
     time: moment.default(Date.now() - 60 * 1000 * 60).fromNow()
   };
 };
+
 export default Home;

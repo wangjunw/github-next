@@ -7,10 +7,11 @@ import App, { Container } from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import MyContext from "../libs/my-context";
-import store from "../store/store";
+import withRedux from "../libs/with-redux";
 // 每个组件加载都会加载App
 class MyApp extends App {
-  static async getInitialProps({ Component, ctx }) {
+  static async getInitialProps(ctx) {
+    const { Component } = ctx;
     let pageProps;
     /**
      * 如果当前Component有getInitialProps，就执行并且传递给对应的组件
@@ -25,14 +26,14 @@ class MyApp extends App {
   }
   // 重写render方法
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, reduxStore } = this.props;
     return (
-      <MyContext.Provider value="test">
-        <Provider store={store}>
+      <Provider store={reduxStore}>
+        <MyContext.Provider value="test">
           <Component {...pageProps}></Component>
-        </Provider>
-      </MyContext.Provider>
+        </MyContext.Provider>
+      </Provider>
     );
   }
 }
-export default MyApp;
+export default withRedux(MyApp);
