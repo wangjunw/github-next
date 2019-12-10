@@ -47,6 +47,11 @@ const Comp = () => {
       <p>{count}</p>
       <h3>{context}</h3>
       <input ref={myRef} />
+      <style jsx>{`
+        p {
+          color: blue;
+        }
+      `}</style>
     </div>
   );
 };

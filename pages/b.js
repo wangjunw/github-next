@@ -15,6 +15,11 @@ const countReducer = (state, action) => {
 const B = () => {
   const [count, dispatchCount] = useReducer(countReducer, 0);
   const [name, setName] = useState("lala");
+  /**
+   * 优化，父组件更新防止子组件更新
+   * 如果不使用useMemo和useCallback，那么每次组件更新都重新声明config和handleClick
+   * useCallback其实是useMemo的简化版，专门用来声明方法
+   */
   const config = useMemo(
     () => ({
       color: count > 3 ? "red" : "blue",
@@ -22,7 +27,8 @@ const B = () => {
     }),
     [count]
   );
-  const handleCilck = useCallback(() => dispatchCount({ type: "add" }), []);
+  const handleClick = useCallback(() => dispatchCount({ type: "add" }), []);
+  //const handleClick = useMemo(() => () => dispatchCount({ type: "add" }), []); 也可以用useMemo实现
   return (
     <div>
       <input
@@ -31,7 +37,7 @@ const B = () => {
           setName(e.target.value);
         }}
       />
-      <Child config={config} onButtonClick={handleCilck}></Child>
+      <Child config={config} onButtonClick={handleClick}></Child>
     </div>
   );
 };

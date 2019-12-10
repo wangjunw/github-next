@@ -13,12 +13,29 @@ const configs = {
     pagesBufferLength: 2 // 同时缓存的页面数
   },
   pageExtensions: ["jsx", "js"], //在page目录下，那种后缀的文件被认为是页面
+  // 配置buildId
+  generateBuildId: async () => {
+    if (process.env.YOUR_BUILD_ID) {
+      return process.env.YOUR_BUILD_ID;
+    }
+    // 返回null使用默认unique id
+    return null;
+  },
   webpack(config, options) {
     return config;
   }, //修改默认的webpack配置
+  webpackDevMiddleware: config => {
+    return config;
+  }, //修改webpackDevMiddleware配置
   env: {
     customKey: "value" //在页面中可以通过process.env.customKey获取value
   },
+  // 只有在服务器渲染有效，在页面通过'next/config'来读取
+  serverRuntimeConfig: {
+    mySecret: "secret",
+    secondSecret: process.env.SECOND_SECRET
+  },
+  // 在服务器渲染和客户端渲染都可以获取配置
   publicRuntimeConfig: {
     staticFolder: "/static"
   }

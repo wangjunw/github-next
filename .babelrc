@@ -1,19 +1,19 @@
 /**
  * "presets": ["next/babel"]是next特有的babel配置，
  * 默认情况下使用import{Button} from 'antd'会将antd全部导入
- * babel-plugin-import的作用是在使用以上方法导入时，分模块导入，而不是全部导入
- * 相当于import Button from 'antd/lib/button'
+ * babel-plugin-import的作用是在使用以上方法导入时分模块导入，相当于import Button from 'antd/lib/button'
+ * styled-components集成styled-components的插件
  */
 {
-    "presets": ["next/babel"],
-    "plugins": [
-        [
-            "import",
-            {
-                "libraryName": "antd"
-                // "style": "css" // 也可以配置css分模块加载，貌似有bug
-            }
-        ],
-        ["styled-components", { "ssr": true }]
-    ]
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "antd"
+        // "style": "css" // 也可以配置css分模块加载，貌似有bug
+      }
+    ],
+    ["styled-components", { "ssr": true }]
+  ]
 }
