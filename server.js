@@ -22,7 +22,7 @@ app.prepare().then(() => {
   server.keys = ["xiaoxiao github"];
   const SESSION_CONFIG = {
     key: "xiao",
-    maxAge: 10 * 1000,
+    // maxAge: 10 * 1000,
     store: new RedisSessionStore(redisClient)
   };
   server.use(session(SESSION_CONFIG, server));
@@ -52,15 +52,14 @@ app.prepare().then(() => {
     };
     ctx.body = "set session success";
   });
+
+  server.use(router.routes());
+
   /**
    * 中间件一般使用异步函数,next调用下一个中间件
    */
   server.use(async (ctx, next) => {
-    // ctx.cookies.set("id", "userid:xxxxx", {
-    //   httpOnly: false
-    // });
     await handle(ctx.req, ctx.res);
-    await next();
     ctx.respond = false; //禁止使用默认的响应
   });
 
@@ -68,7 +67,7 @@ app.prepare().then(() => {
     ctx.res.statusCode = 200;
     await next();
   });
-  server.use(router.routes());
+
   server.listen(3333, () => {
     console.log("success");
   });
