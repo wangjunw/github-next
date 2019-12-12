@@ -6,6 +6,7 @@
 import App, { Container } from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
+import MyContext from "../libs/my-context";
 import withRedux from "../libs/with-redux";
 // 每个组件加载都会加载App
 class MyApp extends App {
@@ -28,7 +29,9 @@ class MyApp extends App {
     const { Component, pageProps, reduxStore } = this.props;
     return (
       <Provider store={reduxStore}>
-        <Component {...pageProps}></Component>
+        <MyContext.Provider value="test">
+          <Component {...pageProps}></Component>
+        </MyContext.Provider>
       </Provider>
     );
   }
