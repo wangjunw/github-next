@@ -2,9 +2,16 @@
  * 页面整体布局
  */
 import { useState, useCallback } from "react";
-import { Button, Layout, Icon, Input, Avatar } from "antd";
+import { Layout, Icon, Input, Avatar, Tooltip, Dropdown, Menu } from "antd";
 const { Header, Content, Footer } = Layout;
+import getConfig from "next/config";
+import axios from "axios";
+import { withRouter } from "next/router";
 import Container from "../components/Container";
+import { connect } from "react-redux";
+const { publicRuntimeConfig } = getConfig();
+import { logout } from "../store/store";
+
 const githubIconStyle = {
   color: "#fff",
   fontSize: 40,
@@ -16,7 +23,7 @@ const footerStyle = {
   textAlign: "center"
 };
 
-export default ({ children }) => {
+function LayoutContainer({ children, user, logout, router }) {
   const [search, setSearch] = useState("");
   /**
    * 优化，每次渲染不再重新声明方法，相当于缓存起来
@@ -27,7 +34,35 @@ export default ({ children }) => {
     setSearch(e.target.value);
   }, []);
 
+  // 搜索仓库
   const searchHandler = useCallback(() => {}, []);
+  // 登记登出
+  const logoutHandler = useCallback(() => {
+    logout();
+  }, [logout]);
+  // 点击登录，先做暂存当前url处理，再去跳转
+  const toOAuthHandler = useCallback(e => {
+    axios
+      .get(`/prepare-auth?url=${router.asPath}`)
+      .then(res => {
+        if (res.status === 200) {
+          location.href = publicRuntimeConfig.OAUTH_URL;
+        } else {
+          console.log("prepare auth faild", res);
+        }
+      })
+      .catch(err => {
+        console.log("prepare auth faild", err);
+      });
+  }, []);
+  const userDropDown = (
+    <Menu>
+      <Menu.Item>
+        <span onClick={logoutHandler}>登出</span>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
       <Header>
@@ -44,12 +79,24 @@ export default ({ children }) => {
             </div>
           </div>
           <div className="header-right">
-            <Avatar size={40} icon="user"></Avatar>
+            {user && user.id ? (
+              <Dropdown overlay={userDropDown}>
+                <a href="/">
+                  <Avatar size={40} src={user.avatar_url}></Avatar>
+                </a>
+              </Dropdown>
+            ) : (
+              <Tooltip title="点击进行登录" placement="bottomRight">
+                <span onClick={toOAuthHandler}>
+                  <Avatar size={40} icon="user"></Avatar>
+                </span>
+              </Tooltip>
+            )}
           </div>
         </div>
       </Header>
       <Content>
-        <Container comp="div">{children}</Container>
+        <Container>{children}</Container>
       </Content>
       <Footer style={footerStyle}>
         develop by xiaowang @
@@ -84,4 +131,18 @@ export default ({ children }) => {
       `}</style>
     </Layout>
   );
-};
+}
+export default connect(
+  state => {
+    return {
+      user: state.user
+    };
+  },
+  dispatch => {
+    return {
+      logout: () => {
+        dispatch(logout());
+      }
+    };
+  }
+)(withRouter(LayoutContainer));

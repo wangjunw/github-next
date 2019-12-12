@@ -25,7 +25,6 @@ export default Comp => {
     }
     render() {
       const { Component, pageProps, ...rest } = this.props;
-      // const num2 = num + "哈哈";
       if (pageProps) {
         pageProps.test = "123455";
       }
@@ -41,11 +40,29 @@ export default Comp => {
   }
 
   /**
+   * 集成服务端redux数据到组件
    * 返回一个新的组件一定要有getInitialProps方法，否则报错
    * 每次服务端渲染或者页面跳转都会执行
    */
   WithReduxApp.getInitialProps = async ctx => {
-    const reduxStore = getOrCreateStore();
+    let reduxStore;
+
+    // 只有在服务端渲染时才能获取到req.session
+    if (isServer) {
+      const { req } = ctx.ctx;
+      const session = req.session;
+      // 如果session有用户信息，存入store中
+      if (session && session.userInfo) {
+        reduxStore = getOrCreateStore({
+          user: session.userInfo
+        });
+      } else {
+        reduxStore = getOrCreateStore();
+      }
+    } else {
+      reduxStore = getOrCreateStore();
+    }
+
     ctx.reduxStore = reduxStore;
 
     let appProps = {};

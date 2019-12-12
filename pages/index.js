@@ -1,8 +1,3 @@
-import Layout from "../components/Layout";
 export default () => {
-  return (
-    <Layout>
-      <span>Index</span>
-    </Layout>
-  );
+  return <span>Index</span>;
 };

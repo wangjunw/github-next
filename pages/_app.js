@@ -3,10 +3,11 @@
  * _app.js重写next默认的app组件，中间写自己要加的部分，一般是公共的一些代码
  * 按理说css文件也应该分模块加载，但是目前mini-css-extract-plugin有bug
  */
-import App, { Container } from "next/app";
+import App from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import withRedux from "../libs/with-redux";
+import Layout from "../components/Layout";
 // 每个组件加载都会加载App
 class MyApp extends App {
   static async getInitialProps(ctx) {
@@ -28,7 +29,9 @@ class MyApp extends App {
     const { Component, pageProps, reduxStore } = this.props;
     return (
       <Provider store={reduxStore}>
-        <Component {...pageProps}></Component>
+        <Layout>
+          <Component {...pageProps}></Component>
+        </Layout>
       </Provider>
     );
   }

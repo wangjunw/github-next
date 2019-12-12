@@ -55,12 +55,14 @@ app.prepare().then(() => {
       ctx.set("Content-Type", "application/json");
     }
   });
+
   server.use(router.routes());
 
   /**
    * 中间件一般使用异步函数,next调用下一个中间件
    */
   server.use(async (ctx, next) => {
+    ctx.req.session = ctx.session;
     await handle(ctx.req, ctx.res);
     ctx.res.statusCode = 200;
     ctx.respond = false; //禁止使用默认的响应

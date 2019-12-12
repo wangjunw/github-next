@@ -7,6 +7,6 @@ const style = {
   marginLeft: "auto",
   marginRight: "auto"
 };
-export default ({ children, comp: Comp }) => {
-  return <Comp style={style}>{children}</Comp>;
+export default ({ children }) => {
+  return <div style={style}>{children}</div>;
 };
