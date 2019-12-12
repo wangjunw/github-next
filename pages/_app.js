@@ -6,10 +6,37 @@
 import App from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
+import Router from "next/router";
+import Link from "next/link";
 import withRedux from "../libs/with-redux";
 import Layout from "../components/Layout";
+import PageLoading from "../components/PageLoading";
 // 每个组件加载都会加载App
 class MyApp extends App {
+  state = {
+    loading: false
+  };
+  startLoading = () => {
+    this.setState({
+      loading: true
+    });
+  };
+  stopLoading = () => {
+    this.setState({
+      loading: false
+    });
+  };
+  componentDidMount() {
+    // 监听路由变化，控制loading
+    Router.events.on("routeChangeStart", this.startLoading);
+    Router.events.on("routeChangeComplete", this.stopLoading);
+    Router.events.on("routeChangeError", this.stopLoading);
+  }
+  componentWillUnmount() {
+    Router.events.off("routeChangeStart", this.startLoading);
+    Router.events.off("routeChangeComplete", this.stopLoading);
+    Router.events.off("routeChangeError", this.stopLoading);
+  }
   static async getInitialProps(ctx) {
     const { Component } = ctx;
     let pageProps;
@@ -29,7 +56,14 @@ class MyApp extends App {
     const { Component, pageProps, reduxStore } = this.props;
     return (
       <Provider store={reduxStore}>
+        {this.state.loading ? <PageLoading /> : ""}
         <Layout>
+          <Link href="/">
+            <a>index</a>
+          </Link>
+          <Link href="/detail">
+            <a>detail</a>
+          </Link>
           <Component {...pageProps}></Component>
         </Layout>
       </Provider>
