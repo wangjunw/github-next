@@ -7,11 +7,9 @@ import App from "next/app";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import Router from "next/router";
-import Link from "next/link";
 import withRedux from "../libs/with-redux";
 import Layout from "../components/Layout";
 import PageLoading from "../components/PageLoading";
-import axios from "axios";
 // 每个组件加载都会加载App
 class MyApp extends App {
   state = {
@@ -59,12 +57,6 @@ class MyApp extends App {
       <Provider store={reduxStore}>
         {this.state.loading ? <PageLoading /> : ""}
         <Layout>
-          <Link href="/">
-            <a>index</a>
-          </Link>
-          <Link href="/detail">
-            <a>detail</a>
-          </Link>
           <Component {...pageProps}></Component>
         </Layout>
       </Provider>
