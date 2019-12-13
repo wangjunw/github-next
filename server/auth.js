@@ -1,3 +1,6 @@
+/**
+ * 处理授权登录登出逻辑
+ */
 const axios = require("axios");
 const config = require("../config/config");
 const { client_id, client_secret, request_token_url } = config.github;

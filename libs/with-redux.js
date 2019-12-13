@@ -1,3 +1,6 @@
+/**
+ * 高阶函数，接受组件返回集成了reduxStore的组件
+ */
 import React from "react";
 import createStore from "../store/store";
 const isServer = typeof window === "undefined";
@@ -25,9 +28,6 @@ export default Comp => {
     }
     render() {
       const { Component, pageProps, ...rest } = this.props;
-      if (pageProps) {
-        pageProps.test = "123455";
-      }
       return (
         <Comp
           Component={Component}

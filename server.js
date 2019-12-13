@@ -5,6 +5,7 @@ const session = require("koa-session");
 const RedisSessionStore = require("./server/session-store");
 const Redis = require("ioredis");
 const auth = require("./server/auth");
+const api = require("./server/api");
 // 不等于production表示处于开发状态
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -29,7 +30,8 @@ app.prepare().then(() => {
 
   // 配置处理github OAuth的登录
   auth(server);
-
+  // 处理api接口相关请求
+  api(server);
   /**
    * 如果使用路由的别名，在前端跳转没有问题，
    * 但是刷新页面会404，因为在pages下并没有对应的路由

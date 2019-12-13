@@ -1,6 +1,6 @@
-function getRedisSessionId(sid) {
-  return `ssid${sid}`;
-}
+/**
+ * redis对session进行操作的类
+ */
 class RedisSessionStore {
   constructor(client) {
     this.client = client;
@@ -50,5 +50,8 @@ class RedisSessionStore {
     await this.client.del(id);
   }
 }
-
+// 重新拼装一个id出来
+function getRedisSessionId(sid) {
+  return `ssid${sid}`;
+}
 module.exports = RedisSessionStore;

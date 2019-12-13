@@ -11,6 +11,7 @@ import Container from "../components/Container";
 import { connect } from "react-redux";
 const { publicRuntimeConfig } = getConfig();
 import { logout } from "../store/store";
+import Link from "next/link";
 
 const githubIconStyle = {
   color: "#fff",
@@ -24,7 +25,9 @@ const footerStyle = {
 };
 
 function LayoutContainer({ children, user, logout, router }) {
-  const [search, setSearch] = useState("");
+  //如果在搜索页面刷新页面，把url上的query赋值到搜索框
+  const urlSearch = router.query && router.query.query;
+  const [search, setSearch] = useState(urlSearch || "");
   /**
    * 优化，每次渲染不再重新声明方法，相当于缓存起来
    * 如果不使用useCallback，那么每次组件更新都重新声明searchHandler
@@ -34,8 +37,10 @@ function LayoutContainer({ children, user, logout, router }) {
     setSearch(e.target.value);
   }, []);
 
-  // 搜索仓库
-  const searchHandler = useCallback(() => {}, []);
+  // 搜索仓库，该函数与search有关所以需要传入[search]
+  const searchHandler = useCallback(() => {
+    router.push(`/search?query=${search}`);
+  }, [search]);
   // 登记登出
   const logoutHandler = useCallback(() => {
     logout();
@@ -68,7 +73,12 @@ function LayoutContainer({ children, user, logout, router }) {
       <Header>
         <div className="header-container">
           <div className="header-left">
-            <Icon type="github" style={githubIconStyle}></Icon>
+            <Link href="/">
+              {/* 如果Link下要放功能性组件，需要通过React.forwardRef来创建组件，否则会报警告 */}
+              <span>
+                <Icon type="github" style={githubIconStyle}></Icon>
+              </span>
+            </Link>
             <div className="serach">
               <Input.Search
                 placeholder="搜索仓库"
@@ -122,11 +132,14 @@ function LayoutContainer({ children, user, logout, router }) {
           height: 100%;
         }
         .ant-layout {
-          height: 100%;
+          min-height: 100%;
         }
         .ant-layout-header {
           padding-left: 20px;
           padding-right: 20px;
+        }
+        .ant-layout-content {
+          background-color: #fff;
         }
       `}</style>
     </Layout>

@@ -11,6 +11,7 @@ import Link from "next/link";
 import withRedux from "../libs/with-redux";
 import Layout from "../components/Layout";
 import PageLoading from "../components/PageLoading";
+import axios from "axios";
 // 每个组件加载都会加载App
 class MyApp extends App {
   state = {
@@ -31,6 +32,9 @@ class MyApp extends App {
     Router.events.on("routeChangeStart", this.startLoading);
     Router.events.on("routeChangeComplete", this.stopLoading);
     Router.events.on("routeChangeError", this.stopLoading);
+    axios.get(`/github/search/repositories?q=react`).then(res => {
+      console.log(res);
+    });
   }
   componentWillUnmount() {
     Router.events.off("routeChangeStart", this.startLoading);
