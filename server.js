@@ -2,6 +2,7 @@ const Koa = require("koa");
 const Router = require("koa-router");
 const next = require("next");
 const session = require("koa-session");
+const koaBody = require("koa-body");
 const RedisSessionStore = require("./server/session-store");
 const Redis = require("ioredis");
 const auth = require("./server/auth");
@@ -20,7 +21,8 @@ const redisClient = new Redis();
 app.prepare().then(() => {
   const server = new Koa();
   const router = new Router();
-  server.keys = ["xiaoxiao github"];
+  server.use(koaBody());
+  server.keys = ["jw github"];
   const SESSION_CONFIG = {
     key: "xiao",
     // maxAge: 10 * 1000, //可以设置过期时间
