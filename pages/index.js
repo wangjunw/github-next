@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 const { request } = require('../libs/api');
 import { Button, Icon, Tabs } from 'antd';
 import { connect } from 'react-redux';
@@ -5,7 +6,18 @@ import { withRouter } from 'next/router';
 import getConfig from 'next/config';
 import Repo from '../components/Repo';
 const { publicRuntimeConfig } = getConfig();
+
+// 缓存仓库列表数据，不必每次切换都请求
+let cacheUserRepos, cacheUserStaredRepos;
+const isServer = typeof window === 'undefined';
 function Index({ userRepos, userStaredRepos, user, router }) {
+    useEffect(() => {
+        if (!isServer) {
+            cacheUserRepos = userRepos;
+            cacheUserStaredRepos = userStaredRepos;
+        }
+    }, []);
+
     // 解决跳转页面回来记住上次的tab页
     const tabKey = router.query.key || '1';
     const tabChange = activeKey => {
@@ -106,8 +118,19 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
         };
     }
 
+    // 在非服务端渲染的情况下如果缓存有数据直接返回
+    if (!isServer) {
+        if (cacheUserRepos && cacheUserStaredRepos) {
+            return {
+                userRepos: cacheUserRepos,
+                userStaredRepos: cacheUserStaredRepos
+            };
+        }
+    }
+
     // 获取用户的公开仓库信息
     const userRepos = await request({ url: '/user/repos' }, ctx.req, ctx.res);
+
     // 获取star仓库
     const userStaredRepos = await request(
         {
@@ -116,6 +139,7 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
         ctx.req,
         ctx.res
     );
+
     return {
         userRepos: userRepos.data,
         userStaredRepos: userStaredRepos.data
