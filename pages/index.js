@@ -5,18 +5,35 @@ import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import getConfig from 'next/config';
 import Repo from '../components/Repo';
+import LRU from 'lru-cache';
 const { publicRuntimeConfig } = getConfig();
 
+// 如果十分钟之内没有使用到缓存的数据，就会清除
+const cache = new LRU({
+    maxAge: 1000 * 10
+});
+
 // 缓存仓库列表数据，不必每次切换都请求
-let cacheUserRepos, cacheUserStaredRepos;
+// let cacheUserRepos, cacheUserStaredRepos;
 const isServer = typeof window === 'undefined';
 function Index({ userRepos, userStaredRepos, user, router }) {
     useEffect(() => {
         if (!isServer) {
-            cacheUserRepos = userRepos;
-            cacheUserStaredRepos = userStaredRepos;
+            // cacheUserRepos = userRepos;
+            // cacheUserStaredRepos = userStaredRepos;
+
+            /**
+             * 这里因为是依赖userRepos和userStaredRepos，所以当他们为null时也会执行
+             * 所以增加一层判断
+             */
+            if (userRepos) {
+                cache.set('userRepos', userRepos);
+            }
+            if (userStaredRepos) {
+                cache.set('userStaredRepos', userStaredRepos);
+            }
         }
-    }, []);
+    }, [userRepos, userStaredRepos]);
 
     // 解决跳转页面回来记住上次的tab页
     const tabKey = router.query.key || '1';
@@ -120,10 +137,17 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
 
     // 在非服务端渲染的情况下如果缓存有数据直接返回
     if (!isServer) {
-        if (cacheUserRepos && cacheUserStaredRepos) {
+        // if (cacheUserRepos && cacheUserStaredRepos) {
+        //     return {
+        //         userRepos: cacheUserRepos,
+        //         userStaredRepos: cacheUserStaredRepos
+        //     };
+        // }
+
+        if (cache.get('userRepos') && cache.get('userStaredRepos')) {
             return {
-                userRepos: cacheUserRepos,
-                userStaredRepos: cacheUserStaredRepos
+                userRepos: cache.get('userRepos'),
+                userStaredRepos: cache.get('userStaredRepos')
             };
         }
     }
