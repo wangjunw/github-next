@@ -10,7 +10,7 @@ const { publicRuntimeConfig } = getConfig();
 
 // 如果十分钟之内没有使用到缓存的数据，就会清除
 const cache = new LRU({
-    maxAge: 1000 * 10
+    maxAge: 1000 * 60 * 10
 });
 
 // 缓存仓库列表数据，不必每次切换都请求
