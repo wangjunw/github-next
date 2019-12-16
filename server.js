@@ -1,4 +1,5 @@
 const Koa = require('koa');
+const atob = require('atob');
 const Router = require('koa-router');
 const next = require('next');
 const session = require('koa-session');
@@ -7,6 +8,10 @@ const RedisSessionStore = require('./server/session-store');
 const Redis = require('ioredis');
 const auth = require('./server/auth');
 const api = require('./server/api');
+
+// 转换base64，浏览器端自带，node端需要引入三方库
+global.atob = atob;
+
 // 不等于production表示处于开发状态
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
