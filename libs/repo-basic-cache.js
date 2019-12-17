@@ -16,7 +16,9 @@ export function get(full_name) {
 }
 
 export function cacheArray(repos) {
-  repos.forEach(repo => {
-    cache(repo);
-  });
+  if (repos && Array.isArray(repos)) {
+    repos.forEach(repo => {
+      cache(repo);
+    });
+  }
 }
